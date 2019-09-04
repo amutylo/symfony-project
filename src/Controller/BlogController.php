@@ -31,12 +31,17 @@ private const POSTS = [
 ];
 
   /**
-   * @Route("/", name="blog_list")
+   * @Route("/{page}", name="blog_list", defaults={"page":1})
    *
    */
-  public function list()
+  public function list($page = 1)
   {
-    return new JsonResponse(self::POSTS);
+    return new JsonResponse(
+      [
+        'page' => $page,
+        'data'=> self::POSTS
+      ]     
+    );
   }
 
   /**
