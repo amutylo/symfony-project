@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -34,11 +34,15 @@ private const POSTS = [
    * @Route("/{page}", name="blog_list", defaults={"page":1})
    *
    */
-  public function list($page = 1)
+  public function list($page = 1, Request $request)
   {
-    return new JsonResponse(
+    // Using dependency ingected Request
+    $limit = $request->get('limit', 10);
+    // use json method from ControllerTrait of AbstractController
+    return $this->json(
       [
         'page' => $page,
+        'limit' => $limit,
         'data'=> array_map(function ($item) {
           return $this->generateUrl('blog_by_id', ['id' => $item['id']]);
           // for slug
@@ -54,7 +58,7 @@ private const POSTS = [
    */
   public function post($id)
   {
-    return new JsonResponse(
+    return $this->json(
         self::POSTS[array_search($id, array_column(self::POSTS, 'id'))]
       );
   }
@@ -65,7 +69,7 @@ private const POSTS = [
    */
   public function postBySlug($slug)
   {
-    return new JsonResponse(
+    return $this->json(
       self::POSTS[array_search($slug, array_column(self::POSTS, 'slug'))]
     );
   }
