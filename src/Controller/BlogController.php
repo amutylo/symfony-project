@@ -39,7 +39,11 @@ private const POSTS = [
     return new JsonResponse(
       [
         'page' => $page,
-        'data'=> self::POSTS
+        'data'=> array_map(function ($item) {
+          return $this->generateUrl('blog_by_id', ['id' => $item['id']]);
+          // for slug
+          // return $this->generateUrl('blog_by_slug', ['slug' => $item['slug']]);
+        },self::POSTS)
       ]     
     );
   }
