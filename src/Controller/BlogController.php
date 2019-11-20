@@ -5,55 +5,39 @@
 
 namespace App\Controller;
 
+use App\Entity\BlogPost;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @Route("/blog")
  */
 class BlogController extends AbstractController
 {
-
-private const POSTS = [
-  [
-    'id' => 1,
-    'slug' => 'hello-world',
-    'title' => 'Hello World'
-  ],
-  [
-    'id' => 2,
-    'slug' => 'another-post',
-    'title' => 'This is another post.'
-  ],
-  [
-    'id' => 3,
-    'slug' => 'last-example',
-    'title' => 'This is the last example.'
-  ],
-];
-
   /**
-   * @Route("/{page}", name="blog_list", defaults={"page":1})
+   * @Route("/{page}", name="blog_list", defaults={"page":1}, requirements={"page"="\d+"})
    *
    */
   public function list(Request $request, $page = 1)
   {
     // Using dependency ingected Request
     $limit = $request->get('limit', 10);
-    $data = array_map(function ($item) {
-      // for id use
-      return $this->generateUrl('blog_by_id', ['id' => $item['id']]);
-      // for slug change to
-      // return $this->generateUrl('blog_by_slug', ['slug' => $item['slug']]);
-    },self::POSTS);
+    $repository = $this->getDoctrine()->getRepository(BlogPost::class);
+    $items = $repository->findAll();
+
     // use json method from ControllerTrait of AbstractController
     return $this->json(
       [
         'page' => $page,
         'limit' => $limit,
-        'data'=> $data
-      ]     
+        'data'=> array_map(function (BlogPost $item) {
+          return $this->generateUrl('blog_by_slug', ['slug' => $item->getSlug()]);
+        }, $items)
+      ]   
     );
   }
 
@@ -61,29 +45,51 @@ private const POSTS = [
    * Get blog post by an blog id.
    * We specify requirements that id must be a number, for controller to differentiate
    * it with the postBySlug method as parameters the same (we specify number for post index)
-   * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"})
    * d+ means match a number appeared once or more
+   * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"})
+   * @ParamConverter("post", class="App:BlogPost")
    *
    */
-  public function post($id)
+  public function post($post)
   {
-    $post_id = array_search($id, array_column(self::POSTS, 'id'));
+    //It is the same as doing find($id) on repository
     return $this->json(
-      self::POSTS[$post_id]
+        $post
       );
   }
 
   /**
    * Blog by slug.
    * 
-   * @Route("/post/{slug}", name="blog_by_slug")
+   * @Route("/post/{slug}", name="blog_by_slug", methods={"GET"})
+   * The below annotation is not required when $post is typehinted with BlogPost
+   * and route parameter name matches any field on the BlogPost entity
+   * First param of mapping is the param from url "slug" the second is the field from entity "slug" (can be author too)
+   * @ParamConverter("post", class="App:BlogPost", options={"mapping": {"slug": "slug"}})
    *
    */
-  public function postBySlug($slug)
+  public function postBySlug(BlogPost $blogPost)
   {
-    $post_id = array_search($slug, array_column(self::POSTS, 'slug'));
+    //It is the same as doing findOneBy(['slug' => $slug])
     return $this->json(
-      self::POSTS[$post_id]
+      $blogPost
     );
+  }
+
+  /**
+   * @Route("/add", name="blog_add")
+   */
+  public function add(Request $request)
+  {
+    /** @var Serializer $serializer */
+    $serializer = $this->get('serializer');
+
+    $blogPost = $serializer->deserialize($request->getContent(), BlogPost::class, 'json');
+
+    $em = $this->getDoctrine()->getManager();
+    $em->persist($blogPost);
+    $em->flush();
+
+    return $this->json($blogPost);
   }
 }

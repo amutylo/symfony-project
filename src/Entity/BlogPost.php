@@ -29,11 +29,6 @@ class BlogPost
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $text;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $author;
 
     /**
@@ -66,18 +61,6 @@ class BlogPost
     public function setPublished(\DateTimeInterface $published): self
     {
         $this->published = $published;
-
-        return $this;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(string $text): self
-    {
-        $this->text = $text;
 
         return $this;
     }
