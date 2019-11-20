@@ -1,4 +1,7 @@
 <?php
+/**
+ * 
+ */
 
 namespace App\Controller;
 
@@ -31,7 +34,7 @@ private const POSTS = [
 ];
 
   /**
-   * @Route("/{page}", name="blog_list", defaults={"page":1})
+   * @Route("/", name="blog_list", defaults={"page":1})
    *
    */
   public function list($page = 1, Request $request)
@@ -53,24 +56,32 @@ private const POSTS = [
   }
 
   /**
+   * Get blog post by an blog id.
+   * We specify requirements that id must be a numeber, otherwise controller will be 
+   * mix it with the postBySlug as parameters the same (we specify number for post index)
    * @Route("/{id}", name="blog_by_id", requirements={"id"="\d+"})
+   * d+ means match a number appeared once or more
    *
    */
   public function post($id)
   {
+    $post_id = array_search($id, array_column(self::POSTS, 'id'));
     return $this->json(
-        self::POSTS[array_search($id, array_column(self::POSTS, 'id'))]
+      self::POSTS[$post_id]
       );
   }
 
   /**
+   * Blog by slug.
+   * 
    * @Route("/{slug}", name="blog_by_slug")
    *
    */
   public function postBySlug($slug)
   {
+    $post_id = array_search($slug, array_column(self::POSTS, 'slug'));
     return $this->json(
-      self::POSTS[array_search($slug, array_column(self::POSTS, 'slug'))]
+      self::POSTS[$post_id]
     );
   }
 }
