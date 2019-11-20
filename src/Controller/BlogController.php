@@ -34,32 +34,34 @@ private const POSTS = [
 ];
 
   /**
-   * @Route("/", name="blog_list", defaults={"page":1})
+   * @Route("/{page}", name="blog_list", defaults={"page":1})
    *
    */
-  public function list($page = 1, Request $request)
+  public function list(Request $request, $page = 1)
   {
     // Using dependency ingected Request
     $limit = $request->get('limit', 10);
+    $data = array_map(function ($item) {
+      // for id use
+      return $this->generateUrl('blog_by_id', ['id' => $item['id']]);
+      // for slug change to
+      // return $this->generateUrl('blog_by_slug', ['slug' => $item['slug']]);
+    },self::POSTS);
     // use json method from ControllerTrait of AbstractController
     return $this->json(
       [
         'page' => $page,
         'limit' => $limit,
-        'data'=> array_map(function ($item) {
-          return $this->generateUrl('blog_by_id', ['id' => $item['id']]);
-          // for slug
-          // return $this->generateUrl('blog_by_slug', ['slug' => $item['slug']]);
-        },self::POSTS)
+        'data'=> $data
       ]     
     );
   }
 
   /**
    * Get blog post by an blog id.
-   * We specify requirements that id must be a numeber, otherwise controller will be 
-   * mix it with the postBySlug as parameters the same (we specify number for post index)
-   * @Route("/{id}", name="blog_by_id", requirements={"id"="\d+"})
+   * We specify requirements that id must be a number, for controller to differentiate
+   * it with the postBySlug method as parameters the same (we specify number for post index)
+   * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"})
    * d+ means match a number appeared once or more
    *
    */
@@ -74,7 +76,7 @@ private const POSTS = [
   /**
    * Blog by slug.
    * 
-   * @Route("/{slug}", name="blog_by_slug")
+   * @Route("/post/{slug}", name="blog_by_slug")
    *
    */
   public function postBySlug($slug)
