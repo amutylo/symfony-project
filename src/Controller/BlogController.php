@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
 
@@ -46,7 +47,7 @@ class BlogController extends AbstractController
    * We specify requirements that id must be a number, for controller to differentiate
    * it with the postBySlug method as parameters the same (we specify number for post index)
    * d+ means match a number appeared once or more
-   * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"})
+   * @Route("/post/{id}", name="blog_by_id", requirements={"id"="\d+"}, methods={"GET"})
    * @ParamConverter("post", class="App:BlogPost")
    *
    */
@@ -91,5 +92,18 @@ class BlogController extends AbstractController
     $em->flush();
 
     return $this->json($blogPost);
+  }
+
+  /**
+   * @Route("/delete/{id}", name="blog_delete", methods={"DELETE"})
+   */
+  public function delete(BlogPost $post) 
+  {
+    $em = $this->getDoctrine()->getManager();
+    // remove method won't actually physically remove record, the flush does it.
+    $em->remove($post);
+    $em->flush();
+
+    return new JsonResponse(null, Response::HTTP_NO_CONTENT);
   }
 }
