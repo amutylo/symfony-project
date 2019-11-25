@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,7 +31,10 @@ class BlogPost
     private $published;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * Make a relation to User Entity and Comment Entity. See them.
+     * Inversed is to tel the other side of relation.
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 
@@ -83,18 +88,6 @@ class BlogPost
         return $this;
     }
 
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(string $author): self
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
     public function getSlug(): ?string
     {
       return $this->slug;
@@ -104,5 +97,24 @@ class BlogPost
     {
       $this->slug = $slug;
     }
+
+  /**
+   * @return User
+   */
+  public function getAuthor(): User
+  {
+    return $this->author;
+  }
+
+  /**
+   * @param User $author
+   *
+   * @return $this
+   */
+  public function setAuthor(User $author): self
+  {
+    $this->author = $author;
+    return $this;
+  }
     
 }
