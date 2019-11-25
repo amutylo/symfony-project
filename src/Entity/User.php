@@ -48,7 +48,7 @@ class User
 
     /**
      * Make a relation to Comment Entity
-     * @ORM/OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
      */
     private $comments;
 
