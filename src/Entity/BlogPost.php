@@ -36,6 +36,11 @@ class BlogPost
      */
     private $slug;
 
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $content;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +67,17 @@ class BlogPost
     {
         $this->published = $published;
 
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
         return $this;
     }
 
