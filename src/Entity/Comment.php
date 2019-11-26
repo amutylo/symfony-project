@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource()
@@ -29,13 +32,18 @@ class Comment
     private $published;
 
     /**
-     * Make a relation to User Entity.
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments") 
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 
-    public function getId(): ?int
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\BlogPost", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $blogPost;
+
+    public function getId()
     {
         return $this->id;
     }
@@ -64,13 +72,13 @@ class Comment
         return $this;
     }
 
-  /**
-   * @return User
-   */
-  public function getAuthor(): User
-  {
-    return $this->author;
-  }
+    /**
+     * @return User
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
 
   /**
    * @param User $author
@@ -82,5 +90,16 @@ class Comment
     $this->author = $author;
     return $this;
   }
-  
+
+    public function getBlogPost(): ?BlogPost
+    {
+        return $this->blogPost;
+    }
+
+    public function setBlogPost(BlogPost $blogPost): self
+    {
+        $this->blogPost = $blogPost;
+
+        return $this;
+    }
 }

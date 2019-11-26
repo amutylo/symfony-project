@@ -2,10 +2,20 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
@@ -48,7 +58,25 @@ class BlogPost
      */
     private $content;
 
-    public function getId(): ?int
+  /**
+   * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
+   */
+    private $comments;
+
+    public function __construct()
+    {
+      $this->comments = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function getId()
     {
         return $this->id;
     }
@@ -85,26 +113,27 @@ class BlogPost
     public function setContent(string $content): self
     {
         $this->content = $content;
+
         return $this;
     }
 
     public function getSlug(): ?string
     {
-      return $this->slug;
+        return $this->slug;
     }
 
     public function setSlug($slug): void
     {
-      $this->slug = $slug;
+        $this->slug = $slug;
     }
 
-  /**
-   * @return User
-   */
-  public function getAuthor(): User
-  {
-    return $this->author;
-  }
+    /**
+     * @return User
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
 
   /**
    * @param User $author
