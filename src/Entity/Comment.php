@@ -9,7 +9,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource()
+ * Enable/disable API resources
+ * @ApiResource(
+ *    itemOperations={"get"},
+ *    collectionOperations={"get"}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
 class Comment

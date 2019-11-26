@@ -19,7 +19,12 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
- * @ApiResource()
+ *
+ * Enable/disable API resources
+ * @ApiResource(
+ *   itemOperations={"get"},
+ *   collectionOperations={"get"}
+ * )
  */
 class BlogPost
 {

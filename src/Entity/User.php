@@ -9,7 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ApiResource()
+ * Enable/disable API resources
+ * @ApiResource(
+ *    itemOperations={"get"},
+ *    collectionOperations={}
+ * )
+ * Entity Class
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface
