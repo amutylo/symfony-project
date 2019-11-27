@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * )
  * Entity Class
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * Make fields below a unique
  * @UniqueEntity("username")
  * @UniqueEntity("email")
  */
