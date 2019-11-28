@@ -11,8 +11,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Enable/disable API resources
  * @ApiResource(
- *    itemOperations={"get"},
- *    collectionOperations={"get"}
+ *   itemOperations={
+ *      "get",
+ *      "put"={
+ *        "access_control"="is_granted('IS_AUTHENTIICATED_FULLY') and object.getAuthor() == user"
+ *      }
+ *   },
+ *   collectionOperations={
+ *    "get",
+ *    "post"={
+ *      "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
+ *    }
+ *  }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */

@@ -15,15 +15,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Enable/disable API resources,
  * adding a group can enable/disable API resource to send some data in response
  * @ApiResource(
- *   itemOperations={"get"},
- *   collectionOperations={"post"},
- *   normalizationContext={
- *      "groups"={"read"}
- *   }
+ *   itemOperations={
+ *      "get"={
+ *         "access_control"="is_granted('IS_AUTHENTICATED_FULLY')",
+ *      "normalization_context"={
+ *            "groups"={"get"}
+ *        }
+ *      },
+ *      "put"={
+ *        "access_control"="is_granted('IS_AUTHENTIICATED_FULLY') and object == user",
+ *        "denormalization_context"={
+ *            "groups"={"put"}
+ *        },
+ *        "normalization_context"={
+ *            "groups"={"get"}
+ *        },
+ *      }
+ *    },
+ *   collectionOperations={
+ *      "post"={
+          "denormalization_context"={
+ *            "groups"={"post"}
+ *        },
+ *        "normalization_context"={
+ *            "groups"={"get"}
+ *        },
+ *      }
+ *    },
+ *
  * )
- * Entity Class
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * Make fields below a unique
  * @UniqueEntity("username")
  * @UniqueEntity("email")
  */
@@ -33,13 +54,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
+     * @Groups({"get","post"})
      * @Assert\NotBlank()
      * @Assert\Length(min=6, max=255)
      */
@@ -47,12 +68,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post"})
      * @Assert\NotBlank()
      */
     private $password;
 
     /**
     * @Assert\NotBlank()
+    * @Groups({"put","post"})
     * @Assert\Expression(
     *      "this.getPassword() === this.getRetypedPassword()",
     *       message="Password does not match"
@@ -62,7 +85,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
+     * @Groups({"get","post","put"})
      * @Assert\NotBlank()
      * @Assert\Length(min=5, max=255)
      */
@@ -70,6 +93,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"post","put"})
      * @Assert\NotBlank()
      * @Assert\Email()
      */
@@ -78,14 +102,14 @@ class User implements UserInterface
     /**
      * Make a relation to BlogPost Entity.
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $posts;
 
     /**
      * Make a relation to Comment Entity
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $comments;
 
@@ -95,7 +119,7 @@ class User implements UserInterface
       $this->comments = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
