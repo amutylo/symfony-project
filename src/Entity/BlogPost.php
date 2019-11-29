@@ -23,7 +23,11 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  * Enable/disable API resources
  * @ApiResource(
  *   itemOperations={
- *      "get",
+ *      "get"={
+ *        "normalization_context"={
+ *          "groups"={"get-blog-post-with-author"}
+ *       }
+ *      },
  *      "put"={
  *        "access_control"="is_granted('IS_AUTHENTIICATED_FULLY') and object.getAuthor() == user"
  *      }
@@ -45,6 +49,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $id;
 
@@ -52,12 +57,13 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Length(min=10)
-     * @Groups({"post"})
+     * @Groups({"post", "get-blog-post-with-author"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"get-blog-post-with-author"})
      */
     private $published;
 
@@ -66,13 +72,14 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * Inversed is to tel the other side of relation.
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"get-blog-post-with-author"})
      */
     private $author;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
-     * @Groups({"post"})
+     * @Groups({"post","get-blog-post-with-author"})
      */
     private $slug;
 
@@ -80,7 +87,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="text")
      * @Assert\NotBlank()
      * @Assert\Length(min=20)
-     * @Groups({"post"})
+     * @Groups({"post","get-blog-post-with-author"})
      */
     private $content;
 
@@ -88,6 +95,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
    * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
    * Add endpoint to fetch linked comments
    * @ApiSubresource()
+   * @Groups({"get-blog-post-with-author"})
    */
     private $comments;
 
