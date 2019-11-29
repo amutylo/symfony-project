@@ -86,6 +86,8 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 
   /**
    * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
+   * Add endpoint to fetch linked comments
+   * @ApiSubresource()
    */
     private $comments;
 
