@@ -22,7 +22,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *    "post"={
  *      "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
  *    }
- *  }
+ *  },
+ *   denormalizationContext={
+ *      "groups"={"post"}
+ *   }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  */
@@ -37,6 +40,9 @@ class Comment  implements AuthoredEntityInterface, PublishedDateEntityInterface
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"post"})
+     * @Assert\NotBlank()
+     * @Assert\Length(min=5, max=3000)
      */
     private $content;
 

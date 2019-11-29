@@ -33,7 +33,10 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  *    "post"={
  *      "access_control"="is_granted('IS_AUTHENTICATED_FULLY')"
  *    }
- *  }
+ *  },
+ *   denormalizationContext={
+ *      "groups"={"post"}
+ *   }
  * )
  */
 class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
@@ -49,12 +52,12 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Length(min=10)
+     * @Groups({"post"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotBlank()
      */
     private $published;
 
@@ -69,6 +72,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
+     * @Groups({"post"})
      */
     private $slug;
 
@@ -76,6 +80,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
      * @ORM\Column(type="text")
      * @Assert\NotBlank()
      * @Assert\Length(min=20)
+     * @Groups({"post"})
      */
     private $content;
 
