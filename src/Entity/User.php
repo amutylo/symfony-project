@@ -41,8 +41,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *            "groups"={"get"}
  *        },
  *      }
- *    },
- *
+ *    }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity("username")
@@ -54,13 +53,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"get"})
+     * @Groups({"get","get-comment-with-author"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get","post"})
+     * @Groups({"get","post","get-comment-with-author"})
      * @Assert\NotBlank()
      * @Assert\Length(min=6, max=255)
      */
@@ -75,7 +74,7 @@ class User implements UserInterface
 
     /**
     * @Assert\NotBlank()
-    * @Groups({"put","post"})
+    * @Groups({"post"})
     * @Assert\Expression(
     *      "this.getPassword() === this.getRetypedPassword()",
     *       message="Password does not match"
@@ -85,7 +84,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"get","post","put"})
+     * @Groups({"get","post","put","get-comment-with-author"})
      * @Assert\NotBlank()
      * @Assert\Length(min=5, max=255)
      */
