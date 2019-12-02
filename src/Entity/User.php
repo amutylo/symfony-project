@@ -56,6 +56,7 @@ class User implements UserInterface
     const ROLE_SUPERADMIN = 'ROLE_SUPERADMIN';
 
     const DEFAULT_ROLES = [self::ROLE_COMMENTATOR];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -99,7 +100,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"post","put","get-admin"})
+     * @Groups({"post", "put", "get-admin"})
      * @Assert\NotBlank()
      * @Assert\Email()
      */
@@ -119,9 +120,10 @@ class User implements UserInterface
      */
     private $comments;
 
-  /**
-   * @ORM\Column(type="simple_array", length=200)
-   */
+    /**
+     * @ORM\Column(type="simple_array", length=200)
+     * @Groups({"get-admin"})
+     */
     private $roles;
 
     public function __construct()
@@ -184,21 +186,21 @@ class User implements UserInterface
         return $this;
     }
 
-  /**
-   * @return Collection
-   */
-  public function getPosts(): Collection
-  {
-    return $this->posts;
-  }
+    /**
+     * @return Collection
+     */
+    public function getPosts(): Collection
+    {
+        return $this->posts;
+    }
 
-  /**
-   * @return Collection
-   */
-  public function getComments(): Collection
-  {
-    return $this->comments;
-  }
+    /**
+     * @return Collection
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
 
   /**
    * Returns the roles granted to the user.
@@ -209,7 +211,7 @@ class User implements UserInterface
    */
   public function getRoles(): array
   {
-    return ['ROLE_USER'];
+    return $this->roles;
   }
 
   /**
