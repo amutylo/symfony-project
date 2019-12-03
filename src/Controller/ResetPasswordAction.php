@@ -58,6 +58,9 @@ class ResetPasswordAction {
       )
     );
 
+    // After changing password the old token still valid.
+    $data->setPasswordChangeDate(time());
+
     // We have to persist store changes in DB
     // Otherwise platform will use entity that already being loaded.
     // We call flush but didn't call persist.

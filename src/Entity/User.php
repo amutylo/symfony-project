@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Controller\ResetPasswordAction;
@@ -160,6 +161,11 @@ class User implements UserInterface
      * @Groups({"get-admin", "get-owner"})
      */
     private $roles;
+
+    /**
+    * @ORM\Column(type="integer", nullable=true)
+    */
+    private $passwordChangeDate;
 
     public function __construct()
     {
@@ -324,5 +330,20 @@ class User implements UserInterface
     $this->oldPassword = $oldPassword;
   }
 
+  /**
+   * @return mixed
+   */
+  public function getPasswordChangeDate()
+  {
+    return $this->passwordChangeDate;
+  }
 
+  /**
+   * @param $passwordChangeDate
+   */
+  public function setPasswordChangeDate($passwordChangeDate): void
+  {
+    $this->passwordChangeDate = $passwordChangeDate;
+  }
+  
 }
