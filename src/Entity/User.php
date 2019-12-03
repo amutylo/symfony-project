@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\ResetPasswordAction;
 
 /**
  * Enable/disable API resources,
@@ -30,6 +31,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *        "normalization_context"={
  *            "groups"={"get"}
  *        },
+ *      },
+ *      "put-reset-password"={
+ *        "access_control"="is_granted('IS_AUTHENTIICATED_FULLY') and object == user",
+ *        "method"="PUT",
+ *        "path"="/users/{id}/reset-password",
+ *        "controller"=ResetPasswordAction::class,
+ *        "denormalization_context"={
+ *            "groups"={"put-reset-password"}
+ *        }
  *      }
  *    },
  *   collectionOperations={
@@ -69,40 +79,65 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Groups({"get","post","get-comment-with-author","get-blog-post-with-author"})
      * @Assert\NotBlank()
-     * @Assert\Length(min=6, max=255)
+     * @Assert\Length(min=6, max=255, groups={"post"})
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"post"})
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(groups={"post"})
      */
     private $password;
 
     /**
-    * @Assert\NotBlank()
+    * @Assert\NotBlank(groups={"post"})
     * @Groups({"post"})
     * @Assert\Expression(
     *      "this.getPassword() === this.getRetypedPassword()",
-    *       message="Password does not match"
+    *       message="Password does not match",
+    *       groups={"post"}
     *   )
     */
     private $retypedPassword;
 
+  /**
+   * @Groups({"put-reset-password"})
+   * @Assert\NotBlank()
+   */
+    private $newPassword;
+
+  /**
+   * @Groups({"put-reset-password"})
+   * @Assert\NotBlank()
+   * @Assert\Expression(
+   *      "this.getNewPassword() === this.getNewRetypedPassword()",
+   *       message="New password does not match"
+   *   )
+   */
+    private $newRetypedPassword;
+
+  /**
+   * @Groups({"put-reset-password"})
+   * @Assert\NotBlank()
+   * @UserPassword()
+   */
+    private $oldPassword;
+    
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"get","post","put","get-comment-with-author", "get-blog-post-with-author"})
-     * @Assert\NotBlank()
-     * @Assert\Length(min=5, max=255)
+     * @Assert\NotBlank(groups={"post", "put"})
+     * @Assert\Length(min=5, max=255, groups={"post", "put"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"post", "put", "get-admin", "get-owner"})
-     * @Assert\NotBlank()
-     * @Assert\Email()
+     * @Assert\NotBlank(groups={"post"})
+     * @Assert\Email(groups={"post"})
+     * @Assert\Length(min=5, max=255, groups={"post", "put"})
      */
     private $email;
 
@@ -257,6 +292,36 @@ class User implements UserInterface
   {
     $this->retypedPassword = $retypedPassword;
     return $this;
+  }
+
+  public function getNewPassword(): ?string
+  {
+    return $this->newPassword;
+  }
+
+  public function setNewPassword($newPassword): void
+  {
+    $this->newPassword = $newPassword;
+  }
+
+  public function getNewRetypedPassword(): ?string
+  {
+    return $this->newRetypedPassword;
+  }
+
+  public function setNewRetypedPassword($newRetypedPassword): void
+  {
+    $this->newRetypedPassword = $newRetypedPassword;
+  }
+
+  public function getOldPassword(): ?string
+  {
+    return $this->oldPassword;
+  }
+
+  public function setOldPassword($oldPassword): void
+  {
+    $this->oldPassword = $oldPassword;
   }
 
 
