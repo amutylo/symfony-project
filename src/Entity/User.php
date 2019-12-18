@@ -104,24 +104,25 @@ class User implements UserInterface
 
   /**
    * @Groups({"put-reset-password"})
-   * @Assert\NotBlank()
+   * @Assert\NotBlank(groups={"put-reset-password"})
    */
     private $newPassword;
 
   /**
    * @Groups({"put-reset-password"})
-   * @Assert\NotBlank()
+   * @Assert\NotBlank(groups={"put-reset-password"})
    * @Assert\Expression(
    *      "this.getNewPassword() === this.getNewRetypedPassword()",
-   *       message="New password does not match"
+   *       message="New password does not match",
+   *       groups={"put-reset-password"}
    *   )
    */
     private $newRetypedPassword;
 
   /**
    * @Groups({"put-reset-password"})
-   * @Assert\NotBlank()
-   * @UserPassword()
+   * @Assert\NotBlank(groups={"put-reset-password"})
+   * @UserPassword(groups={"put-reset-password"})
    */
     private $oldPassword;
     
@@ -358,7 +359,7 @@ class User implements UserInterface
     $this->passwordChangeDate = $passwordChangeDate;
   }
 
-  public function isEnabled(): bool
+  public function getEnabled(): bool
   {
     return $this->enabled;
   }
