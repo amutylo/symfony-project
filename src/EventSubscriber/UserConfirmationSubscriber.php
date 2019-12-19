@@ -3,12 +3,11 @@
 namespace App\EventSubscriber;
 
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Security\UserConfirmationService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use ApiPlatform\Core\EventListener\EventPriorities;
 
@@ -16,23 +15,13 @@ class UserConfirmationSubscriber implements EventSubscriberInterface
 {
 
   /**
-   * @var UserRepository
+   * @var UserConfirmationService
    */
-  private $userRepository;
+  private $confirmationService;
 
-  /**
-   * @var \Doctrine\ORM\EntityManager
-   */
-  private $entityManager;
-
-  public function __construct(
-    UserRepository $userRepository,
-    EntityManagerInterface $entityManager
-  )
+  public function __construct(UserConfirmationService $confirmationService)
   {
-
-    $this->userRepository = $userRepository;
-    $this->entityManager = $entityManager;
+    $this->confirmationService = $confirmationService;
   }
 
   /**
@@ -55,17 +44,8 @@ class UserConfirmationSubscriber implements EventSubscriberInterface
 
     /** @var \App\Entity\UserConfirmation $confirmationToken */
     $confirmationToken = $event->getControllerResult();
-
-    $user = $this->userRepository->findOneBy(['confirmationToken' => $confirmationToken->confirmationToken]);
-
-     // User was NOT found.
-     if (!$user) {
-         throw new NotFoundHttpException();
-     }
-
-     $user->setEnabled(true);
-     $user->setConfirmationToken(null);
-     $this->entityManager->flush();
-     $event->setResponse(new JsonResponse(null, Response::HTTP_OK));
+    $this->confirmationService->confirmUser($confirmationToken->confirmationToken);
+     
+    $event->setResponse(new JsonResponse(null, Response::HTTP_OK));
   }
 }

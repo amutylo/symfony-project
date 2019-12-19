@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\Email\Mailer;
 
 /**
  * Class PasswordHashSubscriber
@@ -31,13 +32,21 @@ class UserRegisterSubscriber  implements EventSubscriberInterface
    */
   private $tokenGenerator;
 
+  /**
+   * @var Mailer
+   */
+  private $mailer;
+
+
   public function __construct(
     UserPasswordEncoderInterface $passwordEncoder,
-    TokenGenerator $tokenGenerator
+    TokenGenerator $tokenGenerator,
+    Mailer $mailer
   )
   {
     $this->passwordEncoder = $passwordEncoder;
     $this->tokenGenerator = $tokenGenerator;
+    $this->mailer = $mailer;
   }
 
   public static function getSubscribedEvents() {
@@ -61,5 +70,8 @@ class UserRegisterSubscriber  implements EventSubscriberInterface
 
     //Generate confirmation token.
     $user->setConfirmationToken($this->tokenGenerator->geRandomSecureToken());
+
+    // Send generated token by mail
+    $this->mailer->sendConfirmationEmail($user);
   }
 }
