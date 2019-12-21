@@ -45,131 +45,140 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  */
 class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups({"get-blog-post-with-author"})
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=10)
-     * @Groups({"post", "get-blog-post-with-author"})
-     */
-    private $title;
-
-    /**
-     * @ORM\Column(type="datetime")
-     * @Groups({"get-blog-post-with-author"})
-     */
-    private $published;
-
-    /**
-     * Make a relation to User Entity and Comment Entity. See them.
-     * Inversed is to tel the other side of relation.
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"get-blog-post-with-author"})
-     */
-    private $author;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\NotBlank()
-     * @Groups({"post","get-blog-post-with-author"})
-     */
-    private $slug;
-
-    /**
-     * @ORM\Column(type="text")
-     * @Assert\NotBlank()
-     * @Assert\Length(min=20)
-     * @Groups({"post","get-blog-post-with-author"})
-     */
-    private $content;
-
   /**
-   * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
-   * Add endpoint to fetch linked comments
-   * @ApiSubresource()
+   * @ORM\Id()
+   * @ORM\GeneratedValue()
+   * @ORM\Column(type="integer")
    * @Groups({"get-blog-post-with-author"})
    */
-    private $comments;
+  private $id;
 
-    public function __construct()
-    {
-      $this->comments = new ArrayCollection();
-    }
+  /**
+   * @ORM\Column(type="string", length=255)
+   * @Assert\NotBlank()
+   * @Assert\Length(min=10)
+   * @Groups({"post", "get-blog-post-with-author"})
+   */
+  private $title;
 
-    /**
-     * @return Collection
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
+  /**
+   * @ORM\Column(type="datetime")
+   * @Groups({"get-blog-post-with-author"})
+   */
+  private $published;
 
-    public function getId()
-    {
-        return $this->id;
-    }
+  /**
+   * Make a relation to User Entity and Comment Entity. See them.
+   * Inversed is to tel the other side of relation.
+   * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
+   * @ORM\JoinColumn(nullable=false)
+   * @Groups({"get-blog-post-with-author"})
+   */
+  private $author;
 
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
+  /**
+   * @ORM\Column(type="string", length=255, nullable=true)
+   * @Assert\NotBlank()
+   * @Groups({"post","get-blog-post-with-author"})
+   */
+  private $slug;
 
-    public function setTitle(string $title): self
-    {
-        $this->title = $title;
+  /**
+   * @ORM\Column(type="text")
+   * @Assert\NotBlank()
+   * @Assert\Length(min=20)
+   * @Groups({"post","get-blog-post-with-author"})
+   */
+  private $content;
 
-        return $this;
-    }
+/**
+ * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
+ * Add endpoint to fetch linked comments
+ * @ApiSubresource()
+ * @Groups({"get-blog-post-with-author"})
+ */
+  private $comments;
 
-    public function getPublished(): ?\DateTimeInterface
-    {
-        return $this->published;
-    }
+/**
+ * @ORM\ManyToMany(targetEntity="App\Entity\Image")
+ * @ORM\JoinTable()
+ * @ApiSubresource()
+ * @Groups({"post", "get-blog-post-with-author"})
+ */
+  private $images;
 
-    public function setPublished(\DateTimeInterface $published): PublishedDateEntityInterface
-    {
-        $this->published = $published;
+  public function __construct()
+  {
+    $this->comments = new ArrayCollection();
+    $this->images = new ArrayCollection();
+  }
 
-        return $this;
-    }
+  /**
+   * @return Collection
+   */
+  public function getComments(): Collection
+  {
+      return $this->comments;
+  }
 
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
+  public function getId()
+  {
+      return $this->id;
+  }
 
-    public function setContent(string $content): self
-    {
-        $this->content = $content;
+  public function getTitle(): ?string
+  {
+      return $this->title;
+  }
 
-        return $this;
-    }
+  public function setTitle(string $title): self
+  {
+      $this->title = $title;
 
-    public function getSlug(): ?string
-    {
-        return $this->slug;
-    }
+      return $this;
+  }
 
-    public function setSlug($slug): void
-    {
-        $this->slug = $slug;
-    }
+  public function getPublished(): ?\DateTimeInterface
+  {
+      return $this->published;
+  }
 
-    /**
-     * @return User
-     */
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
+  public function setPublished(\DateTimeInterface $published): PublishedDateEntityInterface
+  {
+      $this->published = $published;
+
+      return $this;
+  }
+
+  public function getContent(): ?string
+  {
+      return $this->content;
+  }
+
+  public function setContent(string $content): self
+  {
+      $this->content = $content;
+
+      return $this;
+  }
+
+  public function getSlug(): ?string
+  {
+      return $this->slug;
+  }
+
+  public function setSlug($slug): void
+  {
+      $this->slug = $slug;
+  }
+
+  /**
+   * @return User
+   */
+  public function getAuthor(): ?User
+  {
+      return $this->author;
+  }
 
   /**
    * @param UserInterface $author
@@ -181,5 +190,19 @@ class BlogPost implements AuthoredEntityInterface, PublishedDateEntityInterface
     $this->author = $author;
     return $this;
   }
-    
+  
+  public function getImages(): Collection
+  {
+    return $this->images;
+  }
+
+  public function addImage(Image $image)
+  {
+    $this->images->add($image);
+  }
+
+  public  function removeImage(Image $image)
+  {
+    $this->images->removeElement($image);
+  }
 }
