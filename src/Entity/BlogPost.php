@@ -47,6 +47,16 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  *   },
  *   arguments={"orderParameterName"="_order"}
  * )
+ * Specify fields to show to user with property[]="field_name from whitelist"
+ * @ApiFilter(
+ *   PropertyFilter::class,
+ *   arguments={
+ *      "parameterName":"properties",
+ *      "overrideDefaultProperties": false,
+ *      "whitelist":{"id","author","slug","title","content"}
+ *   }
+ * )
+ *
  * Enable/disable API resources
  * @ApiResource(
  *   attributes={
