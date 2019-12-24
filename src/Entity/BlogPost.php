@@ -19,7 +19,15 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
- *
+ * @ApiFilter(
+ *   SearchFilter::class,
+ *   properties={
+ *      "id":"exact",
+ *      "title":"partial",
+ *      "content":"partial",
+ *      "author":"exact"
+ *   }
+ * )
  * Enable/disable API resources
  * @ApiResource(
  *   attributes={
