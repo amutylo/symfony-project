@@ -22,6 +22,9 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  *
  * Enable/disable API resources
  * @ApiResource(
+ *   attributes={
+ *      "order"={"published":"DESC"}
+ *   },
  *   itemOperations={
  *      "get"={
  *        "normalization_context"={

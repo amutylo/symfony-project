@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Enable/disable API resources
  * @ApiResource(
+ *   attributes={
+ *      "order"={"published":"DESC"}
+ *   },
  *   itemOperations={
  *      "get",
  *      "put"={

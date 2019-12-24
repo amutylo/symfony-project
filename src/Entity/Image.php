@@ -13,6 +13,9 @@ use App\Controller\UploadImageAction;
  * @ORM\Entity()
  * @Vich\Uploadable()
  * @ApiResource(
+ *   attributes={
+ *      "id"={"published":"DESC"}
+ *   },
  *   collectionOperations={
  *     "get",
  *      "post"={
