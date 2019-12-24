@@ -28,6 +28,12 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  *      "author":"exact"
  *   }
  * )
+ * @ApiFilter(
+ *   DateFilter::class,
+ *   properties={
+ *      "published"
+ *   }
+ * )
  * Enable/disable API resources
  * @ApiResource(
  *   attributes={
