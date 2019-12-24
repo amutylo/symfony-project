@@ -22,17 +22,30 @@ use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
  * @ApiFilter(
  *   SearchFilter::class,
  *   properties={
- *      "id":"exact",
  *      "title":"partial",
  *      "content":"partial",
- *      "author":"exact"
+ *      "author":"exact",
+ *      "author.name": "partial"
  *   }
+ * )
+ * @ApiFilter(
+ *   RangeFilter::class,
+ *   properties={"id"}
  * )
  * @ApiFilter(
  *   DateFilter::class,
  *   properties={
  *      "published"
  *   }
+ * )
+ * @ApiFilter(
+ *   OrderFilter::class,
+ *   properties={
+ *      "id",
+ *      "published",
+ *      "title"
+ *   },
+ *   arguments={"orderParameterName"="_order"}
  * )
  * Enable/disable API resources
  * @ApiResource(

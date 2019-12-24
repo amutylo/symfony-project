@@ -5,3 +5,6 @@ api_platform:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    # Make order parameter name to be a global for every entity
+    #collection:
+    #    order_parameter_name: '_order'
