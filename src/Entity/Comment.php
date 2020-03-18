@@ -10,10 +10,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * "pagination_enabled"=false - disable pagination only for comments
  * Enable/disable API resources
  * @ApiResource(
  *   attributes={
- *      "order"={"published":"DESC"}
+ *      "order"={"published":"DESC"},
+ *      "pagination_enabled"=false
  *   },
  *   itemOperations={
  *      "get",

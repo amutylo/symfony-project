@@ -8,3 +8,14 @@ api_platform:
     # Make order parameter name to be a global for every entity
     #collection:
     #    order_parameter_name: '_order'
+    # Change pagination page parameter name to be _page
+    #collection:
+    #    pagination:
+    #       enabled: false
+    #       client_enabled: true
+    #       enabled_parameter_name: pagination
+    #       page_parameter_name: _page
+    #       items_per_page: 4
+    #       partial: true # return only next page, so system do not calculate how many this increase performance
+    exception_to_status:
+        App\Exception\EmptyBodyException: 400
